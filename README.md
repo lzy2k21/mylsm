@@ -69,6 +69,7 @@ flowchart TD
     API -.-> MVCC
     API -.-> ACID
     W -.-> REC
+```
 
 ## 项目文件结构
 TODO
