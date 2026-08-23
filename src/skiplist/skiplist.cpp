@@ -4,6 +4,21 @@
 #include <stdexcept>
 
 #include "../../include/skiplist/skiplist.h"
+#include "../../include/skiplist/skiplist_iterator.h"
+
+SkipListNode::SkipListNode(std::string key, std::string value, int level)
+    : key_(key), value_(value), forward(level, nullptr), backward(level) {}
+
+void SkipListNode::SetBackWard(std::shared_ptr<SkipListNode> &other, int idx) {
+  backward[idx] = other;
+}
+
+SkipList::SkipList(int max_level)
+    : max_level_(max_level), curr_level_(1), size_bytes_(0) {
+  head_ = std::make_shared<SkipListNode>("", "", max_level_);
+}
+
+int SkipList::GetSize() const { return size_bytes_; }
 
 int SkipList::random_level() {
   std::random_device rd;
@@ -122,3 +137,9 @@ std::optional<std::string> SkipList::Get(const std::string &key) {
   }
   return std::make_optional(curr->value_);
 }
+
+SkipListIterator SkipList::Begin() {
+  return SkipListIterator(head_->forward[0]);
+}
+
+SkipListIterator SkipList::End() { return SkipListIterator(); }
