@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <memory>
 #include <optional>
 #include <random>
@@ -14,18 +15,16 @@ void SkipListNode::SetBackWard(std::shared_ptr<SkipListNode> &other, int idx) {
 }
 
 SkipList::SkipList(int max_level)
-    : max_level_(max_level), curr_level_(1), size_bytes_(0) {
+    : max_level_(max_level), curr_level_(1), size_bytes_(0),
+      gen_(std::random_device{}()), dist_(0, 1) {
   head_ = std::make_shared<SkipListNode>("", "", max_level_);
 }
 
-int SkipList::GetSize() const { return size_bytes_; }
+size_t SkipList::GetSize() const { return size_bytes_; }
 
 int SkipList::random_level() {
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_int_distribution<int> dist(0, 1);
   int new_level = 1;
-  while (new_level < max_level_ && dist(gen) == 1) {
+  while (new_level < max_level_ && dist_(gen_) == 1) {
     ++new_level;
   }
   return new_level;
@@ -132,10 +131,10 @@ std::optional<std::string> SkipList::Get(const std::string &key) {
   }
 
   curr = curr->forward[0];
-  if (curr == nullptr) {
-    return std::nullopt;
+  if (curr != nullptr && curr->key_ == key) {
+    return std::make_optional(curr->value_);
   }
-  return std::make_optional(curr->value_);
+  return std::nullopt;
 }
 
 SkipListIterator SkipList::Begin() {
