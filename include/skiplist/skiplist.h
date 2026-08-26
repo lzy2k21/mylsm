@@ -21,6 +21,7 @@ struct SkipListNode {
 class SkipList {
 public:
   SkipList(int max_level = 16);
+  ~SkipList();
   void Put(const std::string &key, const std::string &value);
   void Remove(const std::string &key);
   std::optional<std::string> Get(const std::string &key);
