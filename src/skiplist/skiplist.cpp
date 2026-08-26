@@ -20,6 +20,14 @@ SkipList::SkipList(int max_level)
   head_ = std::make_shared<SkipListNode>("", "", max_level_);
 }
 
+SkipList::~SkipList() {
+  while (head_ != nullptr) {
+    auto next = head_->forward[0];
+    head_->forward.clear();
+    head_ = std::move(next);
+  }
+}
+
 size_t SkipList::GetSize() const { return size_bytes_; }
 
 int SkipList::random_level() {
